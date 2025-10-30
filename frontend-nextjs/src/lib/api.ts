@@ -20,7 +20,7 @@ export interface JobStatus {
   error?: string;
 }
 
-export async function uploadFiles(files: File[], parser?: string): Promise<UploadResponse> {
+export async function uploadFiles(files: File[], parser?: string): Promise<UploadResponse[]> {
   const formData = new FormData();
   files.forEach((file) => {
     formData.append('files', file);
@@ -40,7 +40,10 @@ export async function uploadFiles(files: File[], parser?: string): Promise<Uploa
     throw new Error(`Upload failed: ${response.statusText}`);
   }
 
-  return response.json();
+  const data = await response.json();
+  // If the API returns a single object, wrap it in an array
+  // If the API returns an array, return as is
+  return Array.isArray(data) ? data : [data];
 }
 
 export async function getJobStatus(jobId: string): Promise<JobStatus> {
