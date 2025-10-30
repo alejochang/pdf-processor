@@ -18,8 +18,9 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Set environment variable for build
+# Set environment variables for build
 ENV NEXT_PUBLIC_API_URL=http://localhost:8000
+ENV DOCKER_BUILD=true
 
 # Build Next.js application
 RUN npm run build
