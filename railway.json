@@ -1,0 +1,50 @@
+{
+  "$schema": "https://railway.app/railway.schema.json",
+  "build": {
+    "builder": "DOCKERFILE",
+    "dockerfilePath": "backend/Dockerfile"
+  },
+  "deploy": {
+    "numReplicas": 1,
+    "sleepApplication": false,
+    "restartPolicyType": "ON_FAILURE",
+    "restartPolicyMaxRetries": 10
+  },
+  "services": [
+    {
+      "name": "backend",
+      "source": {
+        "repo": "alejochang/pdf-processor",
+        "branch": "main"
+      },
+      "env": {
+        "REDIS_URL": "${{Redis.REDIS_URL}}",
+        "GOOGLE_API_KEY": "AIzaSyDxQWdpHhxe0SckdBArq19pStScZc7iMK0",
+        "MISTRAL_API_KEY": "0mmezs4ZhtCrOwBkEgLQ58kNl8O1AFjO",
+        "MAX_FILE_SIZE_MB": "25"
+      }
+    },
+    {
+      "name": "worker",
+      "source": {
+        "repo": "alejochang/pdf-processor",
+        "branch": "main"
+      },
+      "build": {
+        "builder": "DOCKERFILE",
+        "dockerfilePath": "backend/Dockerfile"
+      },
+      "startCommand": "python -m app.worker",
+      "env": {
+        "REDIS_URL": "${{Redis.REDIS_URL}}",
+        "GOOGLE_API_KEY": "AIzaSyDxQWdpHhxe0SckdBArq19pStScZc7iMK0",
+        "MISTRAL_API_KEY": "0mmezs4ZhtCrOwBkEgLQ58kNl8O1AFjO"
+      }
+    },
+    {
+      "name": "Redis",
+      "image": "redis:7-alpine",
+      "env": {}
+    }
+  ]
+}
