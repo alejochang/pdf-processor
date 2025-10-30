@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import UploadSection from '@/components/UploadSection'
 import JobCard from '@/components/JobCard'
 import ResultModal from '@/components/ResultModal'
@@ -13,23 +13,30 @@ export default function Home() {
   const [isUploading, setIsUploading] = useState(false)
   const [message, setMessage] = useState<{ text: string; type: 'success' | 'error' } | null>(null)
   const [isLoading, setIsLoading] = useState(true)
+  const jobsRef = useRef<JobStatusResponse[]>([])
 
-  // Load jobs on mount and set up auto-refresh
+  // Keep jobsRef in sync with jobs state
+  useEffect(() => {
+    jobsRef.current = jobs
+  }, [jobs])
+
+  // Load jobs and set up smart polling
   useEffect(() => {
     loadJobs()
 
-    // Auto-refresh every 5 seconds if there are active jobs
+    // Set up polling that checks for active jobs before each poll
     const interval = setInterval(() => {
-      const hasActiveJobs = jobs.some(
+      const hasActiveJobs = jobsRef.current.some(
         (job) => job.status === 'pending' || job.status === 'processing'
       )
+
       if (hasActiveJobs) {
         loadJobs()
       }
     }, 5000)
 
     return () => clearInterval(interval)
-  }, [jobs])
+  }, []) // Empty deps - runs once on mount
 
   const loadJobs = async () => {
     try {
