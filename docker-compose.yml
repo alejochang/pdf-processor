@@ -1,0 +1,92 @@
+# ===============================================
+# PDF Processing Application - Docker Compose
+# ===============================================
+
+version: '3.8'
+
+services:
+  # Redis - Job queue and data storage
+  redis:
+    image: redis:7-alpine
+    container_name: pdf-redis
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    networks:
+      - pdf-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  # Backend API - FastAPI application
+  backend:
+    build: ./backend
+    container_name: pdf-backend
+    ports:
+      - "8000:8000"
+    environment:
+      - REDIS_URL=redis://redis:6379
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+      - MISTRAL_API_KEY=${MISTRAL_API_KEY}
+      - UPLOAD_DIR=/app/uploads
+      - MAX_FILE_SIZE_MB=${MAX_FILE_SIZE_MB:-25}
+      - DEBUG=${DEBUG:-false}
+    depends_on:
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./backend:/app
+      - uploads:/app/uploads
+    networks:
+      - pdf-network
+    restart: unless-stopped
+
+  # Worker - Background processor
+  worker:
+    build: ./backend
+    container_name: pdf-worker
+    command: python -m app.worker
+    environment:
+      - REDIS_URL=redis://redis:6379
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+      - MISTRAL_API_KEY=${MISTRAL_API_KEY}
+      - UPLOAD_DIR=/app/uploads
+      - MAX_FILE_SIZE_MB=${MAX_FILE_SIZE_MB:-25}
+      - REDIS_CONSUMER_NAME=worker-1
+    depends_on:
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./backend:/app
+      - uploads:/app/uploads
+    networks:
+      - pdf-network
+    restart: unless-stopped
+
+  # Frontend - Simple web UI for testing
+  frontend:
+    image: nginx:alpine
+    container_name: pdf-frontend
+    ports:
+      - "8080:80"
+    volumes:
+      - ./frontend:/usr/share/nginx/html:ro
+    depends_on:
+      - backend
+    networks:
+      - pdf-network
+    restart: unless-stopped
+
+volumes:
+  redis_data:
+    driver: local
+  uploads:
+    driver: local
+
+networks:
+  pdf-network:
+    driver: bridge

@@ -1,0 +1,27 @@
+# ===============================================
+# PDF Processing Application - Python Dependencies
+# ===============================================
+
+# Web Framework
+fastapi==0.115.0
+uvicorn[standard]==0.32.0
+python-multipart==0.0.19
+
+# Data Validation
+pydantic==2.9.2
+pydantic-settings==2.6.0
+
+# Redis
+redis==5.2.0
+
+# PDF Processing
+pypdf==5.0.1
+pdf2image==1.17.0
+Pillow==10.4.0
+
+# AI APIs
+google-generativeai==0.8.3
+mistralai==1.2.2
+
+# Utilities
+python-dotenv==1.0.1
