@@ -77,7 +77,7 @@ The `.env` file is already configured with your Gemini API key. If you need to m
 
 ```bash
 # Edit .env file
-GOOGLE_API_KEY=AIzaSyDxQWdpHhxe0SckdBArq19pStScZc7iMK0
+GOOGLE_API_KEY=your_gemini_key_here
 MISTRAL_API_KEY=your_mistral_key_here  # Optional
 MAX_FILE_SIZE_MB=25
 ```
@@ -106,7 +106,7 @@ docker-compose up -d --build
 
 1. Open http://localhost:3000 in your browser
 2. Drag and drop PDF files or click to select
-3. Choose a parser (PyPDF, Gemini, or Mistral)
+3. Choose a parser (PyPDF, , or Mistral)
 4. Click "Upload and Process"
 5. Monitor job status and view results (auto-refreshes for active jobs)
 
@@ -119,9 +119,9 @@ docker-compose up -d --build
 curl -X POST -F "files=@sample.pdf" \
      "http://localhost:8000/api/upload?parser=pypdf"
 
-# Upload multiple files with Gemini parser
+# Upload multiple files with  parser
 curl -X POST -F "files=@sample1.pdf" -F "files=@sample2.pdf" \
-     "http://localhost:8000/api/upload?parser=gemini"
+     "http://localhost:8000/api/upload?parser="
 ```
 
 Response:
@@ -131,7 +131,7 @@ Response:
     "job_id": "550e8400-e29b-41d4-a716-446655440000",
     "status": "pending",
     "filename": "sample.pdf",
-    "parser": "gemini",
+    "parser": "",
     "timestamp": "2024-01-15T10:30:00Z"
   }
 ]
@@ -149,7 +149,7 @@ Response:
   "job_id": "550e8400-e29b-41d4-a716-446655440000",
   "status": "processing",
   "filename": "sample.pdf",
-  "parser": "gemini",
+  "parser": "",
   "timestamp": "2024-01-15T10:30:00Z",
   "error": null
 }
@@ -167,7 +167,7 @@ Response:
   "job_id": "550e8400-e29b-41d4-a716-446655440000",
   "status": "completed",
   "filename": "sample.pdf",
-  "parser": "gemini",
+  "parser": "",
   "pages": [
     {
       "page": "1",
@@ -255,7 +255,7 @@ All configuration is managed through environment variables in `.env`:
 | Variable | Description | Default |
 |----------|-------------|---------|
 | `REDIS_URL` | Redis connection string | `redis://redis:6379` |
-| `GOOGLE_API_KEY` | Google Gemini API key | *Required* |
+| `GOOGLE_API_KEY` | Google  API key | *Required* |
 | `MISTRAL_API_KEY` | Mistral API key | *Optional* |
 | `MAX_FILE_SIZE_MB` | Maximum PDF size | `25` |
 | `UPLOAD_DIR` | File upload directory | `/app/uploads` |
@@ -371,7 +371,7 @@ docker-compose logs -f worker
 
 | Parser | Speed | Accuracy | Use Case | API Required |
 |--------|-------|----------|----------|--------------|
-| **PyPDF** | ⚡ Fast | Good | Text-based PDFs | Gemini (summary only) |
+| **PyPDF** | ⚡ Fast | Good | Text-based PDFs |  (summary only) |
 | **Gemini** | ⚙️ Moderate | Excellent | Complex layouts | Gemini |
 | **Mistral** | 🐌 Slow | Excellent | Scanned/Image PDFs | Mistral |
 
