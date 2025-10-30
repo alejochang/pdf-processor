@@ -67,14 +67,14 @@ services:
       - pdf-network
     restart: unless-stopped
 
-  # Frontend - Simple web UI for testing
+  # Frontend - Next.js React application
   frontend:
-    image: nginx:alpine
+    build: ./frontend-nextjs
     container_name: pdf-frontend
     ports:
-      - "8080:80"
-    volumes:
-      - ./frontend:/usr/share/nginx/html:ro
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8000
     depends_on:
       - backend
     networks:

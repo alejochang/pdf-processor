@@ -20,7 +20,7 @@ An async PDF processing system with multiple AI-powered parser options, built wi
 ```
 ┌─────────────┐      ┌─────────────┐      ┌─────────────┐
 │   Frontend  │─────▶│   Backend   │─────▶│    Redis    │
-│  (Nginx)    │      │  (FastAPI)  │      │  (Streams)  │
+│  (Next.js)  │      │  (FastAPI)  │      │  (Streams)  │
 └─────────────┘      └─────────────┘      └─────────────┘
                             │                      │
                             │                      ▼
@@ -29,6 +29,27 @@ An async PDF processing system with multiple AI-powered parser options, built wi
                                            │  (Python)   │
                                            └─────────────┘
 ```
+
+### Frontend Options
+
+This application offers **two frontend implementations**:
+
+1. **Next.js/React** (Recommended - `frontend-nextjs/`)
+   - Modern React 18 with TypeScript
+   - Type-safe API client
+   - Component-based architecture
+   - Tailwind CSS styling
+   - Enhanced UX with smooth animations
+   - Better maintainability and scalability
+   - See [frontend-nextjs/README.md](frontend-nextjs/README.md) for details
+
+2. **Vanilla HTML/JS** (Simple - `frontend/`)
+   - Lightweight single-page application
+   - No build process required
+   - Minimal dependencies
+   - Quick to deploy
+
+**By default, docker-compose uses the Next.js frontend on port 3000.**
 
 ### Data Structures
 
@@ -73,19 +94,21 @@ docker-compose up -d --build
 
 ### 4. Access the Application
 
-- **Web UI**: http://localhost:8080
+- **Web UI (Next.js)**: http://localhost:3000
 - **API Documentation**: http://localhost:8000/docs
 - **API Base URL**: http://localhost:8000
+
+> **Note**: To use the vanilla HTML/JS frontend instead, modify `docker-compose.yml` to build `./frontend` instead of `./frontend-nextjs` and change the port to `8080:80`.
 
 ## 🧪 Testing
 
 ### Option 1: Web UI (Recommended)
 
-1. Open http://localhost:8080 in your browser
+1. Open http://localhost:3000 in your browser
 2. Drag and drop PDF files or click to select
 3. Choose a parser (PyPDF, Gemini, or Mistral)
 4. Click "Upload and Process"
-5. Monitor job status and view results
+5. Monitor job status and view results (auto-refreshes for active jobs)
 
 ### Option 2: cURL Commands
 
@@ -189,15 +212,41 @@ pdf-processor/
 │   │   └── config.py        # Configuration management
 │   ├── requirements.txt
 │   └── Dockerfile
-├── frontend/
-│   ├── index.html          # Web UI
-│   └── app.js              # Frontend JavaScript
+├── frontend-nextjs/         # Next.js/React frontend (default)
+│   ├── src/
+│   │   ├── app/            # Next.js pages
+│   │   ├── components/     # React components
+│   │   ├── lib/            # API client
+│   │   └── types/          # TypeScript types
+│   ├── package.json
+│   ├── Dockerfile
+│   └── README.md
+├── frontend/                # Vanilla HTML/JS frontend (alternative)
+│   ├── index.html
+│   └── app.js
 ├── sample_pdfs/            # Place test PDFs here
 ├── docker-compose.yml
 ├── .env                    # Environment variables
 ├── .env.example           # Template
 └── README.md
 ```
+
+## 💡 Frontend Comparison
+
+| Feature | Next.js/React | Vanilla HTML/JS |
+|---------|--------------|-----------------|
+| **Type Safety** | ✅ Full TypeScript | ❌ None |
+| **Component Reusability** | ✅ React components | ❌ Manual DOM |
+| **State Management** | ✅ React hooks | ❌ Manual |
+| **Build Process** | ✅ Optimized bundles | ❌ None |
+| **Hot Reload** | ✅ Yes | ❌ No |
+| **Maintainability** | ✅ High | ⚠️ Medium |
+| **Learning Curve** | ⚠️ Medium | ✅ Low |
+| **Bundle Size** | ~200KB gzipped | ~10KB |
+| **Development Speed** | ✅ Faster (after setup) | ✅ Faster (initial) |
+
+**Choose Next.js if:** You want better maintainability, type safety, and plan to extend features.
+**Choose Vanilla if:** You prefer simplicity, no build process, or minimal dependencies.
 
 ## 🔧 Configuration
 
@@ -233,6 +282,22 @@ python -m app.worker
 ```
 
 ### Run Frontend Locally
+
+#### Next.js Frontend
+
+```bash
+cd frontend-nextjs
+
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
+
+# Access at http://localhost:3000
+```
+
+#### Vanilla HTML/JS Frontend
 
 ```bash
 cd frontend
