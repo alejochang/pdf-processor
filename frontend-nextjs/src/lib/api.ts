@@ -1,0 +1,59 @@
+// src/lib/api.ts
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+
+export interface UploadResponse {
+  job_id: string;
+}
+
+export interface JobStatus {
+  job_id: string;
+  status: 'pending' | 'processing' | 'completed' | 'failed';
+  progress?: number;
+  result?: {
+    text: string;
+    metadata: {
+      filename: string;
+      page_count: number;
+      processing_time: number;
+    };
+  };
+  error?: string;
+}
+
+export async function uploadFiles(files: File[]): Promise<UploadResponse> {
+  const formData = new FormData();
+  files.forEach((file) => {
+    formData.append('files', file);
+  });
+
+  const response = await fetch(`${API_BASE_URL}/upload`, {
+    method: 'POST',
+    body: formData,
+  });
+
+  if (!response.ok) {
+    throw new Error(`Upload failed: ${response.statusText}`);
+  }
+
+  return response.json();
+}
+
+export async function getJobStatus(jobId: string): Promise<JobStatus> {
+  const response = await fetch(`${API_BASE_URL}/status/${jobId}`);
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch status: ${response.statusText}`);
+  }
+
+  return response.json();
+}
+
+export async function downloadResult(jobId: string): Promise<Blob> {
+  const response = await fetch(`${API_BASE_URL}/download/${jobId}`);
+
+  if (!response.ok) {
+    throw new Error(`Download failed: ${response.statusText}`);
+  }
+
+  return response.blob();
+}
