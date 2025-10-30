@@ -74,3 +74,13 @@ export async function listJobs(): Promise<any> {
   
   return response.json();
 }
+
+export async function deleteJob(jobId: string): Promise<void> {
+  const response = await fetch(`${API_BASE_URL}/jobs/${jobId}`, {
+    method: 'DELETE',
+  });
+  
+  if (!response.ok) {
+    throw new Error(`Failed to delete job: ${response.statusText}`);
+  }
+}
