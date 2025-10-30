@@ -40,20 +40,37 @@ export async function uploadFiles(files: File[]): Promise<UploadResponse> {
 
 export async function getJobStatus(jobId: string): Promise<JobStatus> {
   const response = await fetch(`${API_BASE_URL}/status/${jobId}`);
-
+  
   if (!response.ok) {
     throw new Error(`Failed to fetch status: ${response.statusText}`);
   }
-
+  
   return response.json();
 }
 
 export async function downloadResult(jobId: string): Promise<Blob> {
   const response = await fetch(`${API_BASE_URL}/download/${jobId}`);
-
+  
   if (!response.ok) {
     throw new Error(`Download failed: ${response.statusText}`);
   }
-
+  
   return response.blob();
+}
+
+export function getErrorMessage(error: any): string {
+  if (error && typeof error === 'object' && 'message' in error) {
+    return error.message;
+  }
+  return String(error);
+}
+
+export async function listJobs(): Promise<any> {
+  const response = await fetch(`${API_BASE_URL}/jobs`);
+  
+  if (!response.ok) {
+    throw new Error(`Failed to list jobs: ${response.statusText}`);
+  }
+  
+  return response.json();
 }
