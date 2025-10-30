@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useCallback } from 'react'
-import type { ParserType } from '@/types'
+import type { ParserType } from '../types'
 
 interface UploadSectionProps {
   onUpload: (files: File[], parser: ParserType) => Promise<void>

@@ -1,6 +1,6 @@
 'use client'
 
-import type { JobStatusResponse } from '@/types'
+import type { JobStatusResponse } from '../types'
 
 interface JobCardProps {
   job: JobStatusResponse

@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
-import type { ProcessingResult } from '@/types'
+import type { ProcessingResult } from '../types'
 
 interface ResultModalProps {
   result: ProcessingResult | null

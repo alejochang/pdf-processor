@@ -1,11 +1,11 @@
 'use client'
 
 import { useState, useEffect, useCallback, useRef } from 'react'
-import UploadSection from '@/components/UploadSection'
-import JobCard from '@/components/JobCard'
-import ResultModal from '@/components/ResultModal'
-import * as api from '@/lib/api'
-import type { JobStatusResponse, ProcessingResult, ParserType } from '@/types'
+import UploadSection from '../components/UploadSection'
+import JobCard from '../components/JobCard'
+import ResultModal from '../components/ResultModal'
+import * as api from '../lib/api'
+import type { JobStatusResponse, ProcessingResult, ParserType } from '../types'
 
 export default function Home() {
   const [jobs, setJobs] = useState<JobStatusResponse[]>([])
