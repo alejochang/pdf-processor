@@ -41,7 +41,7 @@ export default function Home() {
   const loadJobs = async () => {
     try {
       const response = await api.listJobs()
-      setJobs(response.jobs.sort((a, b) =>
+      setJobs(response.jobs.sort((a: JobStatusResponse, b: JobStatusResponse) =>
         new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
       ))
     } catch (error) {
