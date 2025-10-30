@@ -20,13 +20,18 @@ export interface JobStatus {
   error?: string;
 }
 
-export async function uploadFiles(files: File[]): Promise<UploadResponse> {
+export async function uploadFiles(files: File[], parser?: string): Promise<UploadResponse> {
   const formData = new FormData();
   files.forEach((file) => {
     formData.append('files', file);
   });
 
-  const response = await fetch(`${API_BASE_URL}/upload`, {
+  // Add parser as query parameter if provided
+  const url = parser 
+    ? `${API_BASE_URL}/upload?parser=${parser}` 
+    : `${API_BASE_URL}/upload`;
+
+  const response = await fetch(url, {
     method: 'POST',
     body: formData,
   });
@@ -43,6 +48,16 @@ export async function getJobStatus(jobId: string): Promise<JobStatus> {
   
   if (!response.ok) {
     throw new Error(`Failed to fetch status: ${response.statusText}`);
+  }
+  
+  return response.json();
+}
+
+export async function getJobResult(jobId: string): Promise<any> {
+  const response = await fetch(`${API_BASE_URL}/result/${jobId}`);
+  
+  if (!response.ok) {
+    throw new Error(`Failed to fetch result: ${response.statusText}`);
   }
   
   return response.json();
