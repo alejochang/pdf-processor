@@ -70,7 +70,7 @@ class Settings(BaseSettings):
         "http://localhost:3000",
         "http://localhost:8080",
         "http://localhost:5173",  # Vite default
-        "https://pdf-processor-1tbl1hc01-alejandro-changs-projects-029b7b9c.vercel.app",  # Production frontend
+        "https://pdf-processor-sage-xi.vercel.app",  # Production frontend on Vercel
     ]
     
     model_config = SettingsConfigDict(
