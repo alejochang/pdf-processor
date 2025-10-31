@@ -1,32 +1,46 @@
 """Application configuration management.
-This module uses pydantic-settings to load configuration from environment
-variables, providing type safety and validation for all settings.
+
+This module provides a centralized configuration system using Pydantic Settings.
+All environment variables are loaded and validated here, making it easy to
+manage configuration across different environments (development, staging, production).
+
+Environment variables can be set in:
+1. System environment variables
+2. .env file in the project root
+3. Docker/cloud platform environment configurations
 """
-from pydantic_settings import BaseSettings, SettingsConfigDict
-from functools import lru_cache
+
 import os
+from functools import lru_cache
+
+from pydantic import Field
+from pydantic_settings import BaseSettings, SettingsConfigDict
+
 
 class Settings(BaseSettings):
-    """Application settings loaded from environment variables.
+    """Application settings.
     
-    All settings have sensible defaults for development, but should be
-    overridden in production via environment variables or .env file.
+    This class defines all configuration parameters for the application.
+    Values are automatically loaded from environment variables or .env file.
+    
+    Attributes:
+        google_api_key: API key for Google Gemini.
+        mistral_api_key: API key for Mistral AI.
+        upload_dir: Directory for storing uploaded files.
+        max_file_size_mb: Maximum allowed file size in megabytes.
+        allowed_extensions: List of allowed file extensions.
+        cors_origins: List of allowed CORS origins for frontend access.
     """
     
-    # Application Metadata
-    app_name: str = "PDF Processor"
-    app_version: str = "0.1.0"
-    
-    # Redis Configuration
-    redis_url: str = "redis://localhost:6379"
-    redis_stream_name: str = "pdf-jobs"
-    redis_consumer_group: str = "pdf-workers"
-    redis_consumer_name: str = "worker-1"
-    redis_result_ttl_seconds: int = 3600  # 1 hour
-    
-    # API Keys
-    google_api_key: str = ""
-    mistral_api_key: str = ""
+    # API Keys - Required for PDF processing
+    google_api_key: str = Field(
+        default="",
+        description="Google API key for Gemini LLM"
+    )
+    mistral_api_key: str = Field(
+        default="",
+        description="Mistral API key for Mistral LLM"
+    )
     
     # File Upload Configuration
     upload_dir: str = "./uploads"
@@ -38,7 +52,7 @@ class Settings(BaseSettings):
         "http://localhost:3000",
         "http://localhost:8080",
         "http://localhost:5173",  # Vite default
-        "https://pdf-processor-navp1zrg3-alejandro-changs-projects-029b7b9c.vercel.app",  # Production frontend
+        "https://pdf-processor-1tbl1hc01-alejandro-changs-projects-029b7b9c.vercel.app",  # Production frontend
     ]
     
     model_config = SettingsConfigDict(
@@ -74,6 +88,7 @@ class Settings(BaseSettings):
         the upload directory is available.
         """
         os.makedirs(self.upload_dir, exist_ok=True)
+
 
 @lru_cache()
 def get_settings() -> Settings:
