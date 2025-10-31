@@ -24,13 +24,24 @@ class Settings(BaseSettings):
     Values are automatically loaded from environment variables or .env file.
     
     Attributes:
+        app_name: Name of the application.
+        app_version: Version of the application.
         google_api_key: API key for Google Gemini.
         mistral_api_key: API key for Mistral AI.
         upload_dir: Directory for storing uploaded files.
         max_file_size_mb: Maximum allowed file size in megabytes.
         allowed_extensions: List of allowed file extensions.
+        redis_url: URL for Redis connection.
+        redis_stream_name: Name of the Redis stream for job queue.
+        redis_consumer_group: Name of the Redis consumer group.
+        redis_consumer_name: Name of this Redis consumer.
+        redis_result_ttl_seconds: TTL for job results in Redis.
         cors_origins: List of allowed CORS origins for frontend access.
     """
+    
+    # Application metadata
+    app_name: str = "PDF Processor"
+    app_version: str = "0.1.0"
     
     # API Keys - Required for PDF processing
     google_api_key: str = Field(
@@ -46,6 +57,13 @@ class Settings(BaseSettings):
     upload_dir: str = "./uploads"
     max_file_size_mb: int = 25
     allowed_extensions: list[str] = [".pdf"]
+    
+    # Redis Configuration (for job queue)
+    redis_url: str = "redis://localhost:6379"
+    redis_stream_name: str = "pdf-jobs"
+    redis_consumer_group: str = "pdf-workers"
+    redis_consumer_name: str = "worker-1"
+    redis_result_ttl_seconds: int = 3600
     
     # CORS Configuration (for frontend)
     cors_origins: list[str] = [
